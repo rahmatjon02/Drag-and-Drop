@@ -1,0 +1,142 @@
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import type { Item, Pair, CorrectPair } from "../types/types";
+
+export const useDragAndDrop = (
+  leftItems: Item[],
+  rightItems: Item[],
+  correctPairs: CorrectPair[]
+) => {
+  const [draggingItem, setDraggingItem] = useState<Item | null>(null);
+  const [hoverItem, setHoverItem] = useState<string | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [pairs, setPairs] = useState<Pair[]>([]);
+
+  const leftRefs = useRef<{ [key: string]: HTMLDivElement }>({});
+  const rightRefs = useRef<{ [key: string]: HTMLDivElement }>({});
+
+  useEffect(() => {
+    const saved = localStorage.getItem("pairs");
+    if (saved) {
+      try {
+        setPairs(JSON.parse(saved));
+      } catch {
+        localStorage.removeItem("pairs");
+      }
+    }
+  }, []);
+
+  const handleDragStart = (item: Item, e: React.DragEvent) => {
+    e.dataTransfer.setData("text/plain", item.id);
+    setDraggingItem(item);
+  };
+
+  const handleDrop = (target: Item) => {
+    if (!draggingItem || draggingItem.id === target.id) return;
+
+    const isLeftToRight =
+      leftItems.some((i) => i.id === draggingItem.id) &&
+      rightItems.some((i) => i.id === target.id);
+
+    const isRightToLeft =
+      rightItems.some((i) => i.id === draggingItem.id) &&
+      leftItems.some((i) => i.id === target.id);
+
+    if (!isLeftToRight && !isRightToLeft) {
+      toast.error("Можно соединять только противоположные колонки!");
+      resetDrag();
+      return;
+    }
+
+    const leftId = isLeftToRight ? draggingItem.id : target.id;
+    const rightId = isLeftToRight ? target.id : draggingItem.id;
+
+    const leftOccupied = pairs.some(
+      (p) => p.left === (isLeftToRight ? draggingItem.text : target.text)
+    );
+    const rightOccupied = pairs.some(
+      (p) => p.right === (isLeftToRight ? target.text : draggingItem.text)
+    );
+
+    if (leftOccupied || rightOccupied) {
+      toast.error("Эта карта уже занята!");
+      resetDrag();
+      return;
+    }
+
+    const isCorrect = correctPairs.some(
+      (pair) => pair.leftId === leftId && pair.rightId === rightId
+    );
+
+    const newPair: Pair = {
+      id: `${draggingItem.id}-${target.id}`,
+      left: isLeftToRight ? draggingItem.text : target.text,
+      right: isLeftToRight ? target.text : draggingItem.text,
+      isCorrect,
+    };
+
+    setPairs((prev) => [...prev, newPair]);
+    resetDrag();
+  };
+
+  const resetDrag = () => {
+    setDraggingItem(null);
+    setHoverItem(null);
+  };
+
+  const saveToLocalStorage = () => {
+    if (pairs.length == 0) {
+      toast.error("Нет сохранённых данных");
+      return;
+    }
+    localStorage.setItem("pairs", JSON.stringify(pairs));
+    toast.success("Соединения сохранены!");
+  };
+
+  const loadFromLocalStorage = () => {
+    const saved = localStorage.getItem("pairs");
+    if (!saved) {
+      toast.error("Нет сохранённых данных");
+      return;
+    }
+    try {
+      setPairs(JSON.parse(saved));
+      if (JSON.parse(saved).length == 0) {
+        toast.error("Нет сохранённых данных1");
+        return;
+      }
+      toast.success("Соединения восстановлены!");
+    } catch {
+      toast.error("Ошибка загрузки данных");
+    }
+  };
+
+  const clearLocalStorage = () => {
+    localStorage.removeItem("pairs");
+    setPairs([]);
+    toast.success("Данные очищены!");
+  };
+
+  const clearPairs = () => {
+    setPairs([]);
+    toast.success("Данные очищены!");
+  };
+
+  return {
+    draggingItem,
+    hoverItem,
+    mousePosition,
+    pairs,
+    leftRefs,
+    rightRefs,
+    setHoverItem,
+    setMousePosition,
+    handleDragStart,
+    handleDrop,
+    resetDrag,
+    saveToLocalStorage,
+    loadFromLocalStorage,
+    clearLocalStorage,
+    clearPairs,
+  };
+};
