@@ -56,6 +56,7 @@ export const ItemWrapper = styled.div<{
 
   @media (max-width: 768px) {
     width: 120px;
+    font-size: 12px;
   }
 `;
 
