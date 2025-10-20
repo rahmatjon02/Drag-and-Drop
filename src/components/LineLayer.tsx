@@ -1,6 +1,6 @@
 import { memo } from "react";
 import type { Pair, Item } from "../types/types";
-import { SvgLayer, PathLine, DragLine } from "../styles/styles";
+import { SvgLayer, PathLine, DragLine, LineDot } from "../styles/styles";
 
 interface Props {
   pairs: Pair[];
@@ -44,11 +44,14 @@ const LineLayer = ({
       const cx = (startX + endX) / 2;
 
       return (
-        <PathLine
-          key={pair.id}
-          d={`M ${startX} ${startY} C ${cx} ${startY}, ${cx} ${endY}, ${endX} ${endY}`}
-          $isCorrect={pair.isCorrect}
-        />
+        <g key={pair.id}>
+          <PathLine
+            d={`M ${startX} ${startY} C ${cx} ${startY}, ${cx} ${endY}, ${endX} ${endY}`}
+            $isCorrect={pair.isCorrect}
+          />
+          <LineDot cx={startX} cy={startY} r="4" $isCorrect={pair.isCorrect} />
+          <LineDot cx={endX} cy={endY} r="4" $isCorrect={pair.isCorrect} />
+        </g>
       );
     })}
 
@@ -67,11 +70,13 @@ const LineLayer = ({
         const startY = rect.top + rect.height / 2 - container.top;
         const endX = mousePosition.x - container.left;
         const endY = mousePosition.y - container.top;
+        console.log(mousePosition);
 
         return (
-          <DragLine
-            d={`M ${startX} ${startY} L ${endX} ${endY}`}
-          />
+          <g>
+            <DragLine d={`M ${startX} ${startY} L ${endX} ${endY}`} />
+            <circle cx={startX} cy={startY} r="4" fill="red" />
+          </g>
         );
       })()}
   </SvgLayer>

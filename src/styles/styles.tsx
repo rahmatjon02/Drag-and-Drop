@@ -43,7 +43,6 @@ export const ItemWrapper = styled.div<{
       ? "rgba(0,123,255,0.1)"
       : "white"};
   border-radius: 12px;
-  cursor: grab;
   user-select: none;
   font-weight: 500;
   font-size: 16px;
@@ -52,8 +51,11 @@ export const ItemWrapper = styled.div<{
   transition: all 0.25s ease;
 
   &:hover {
-    transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    width: 120px;
   }
 `;
 
@@ -78,10 +80,22 @@ export const PathLine = styled.path<{ $isCorrect?: boolean | null }>`
 `;
 
 export const DragLine = styled.path`
-  stroke: #007bff;
+  stroke: red;
   stroke-width: 3;
   stroke-dasharray: 6, 6;
   fill: none;
+`;
+
+export const LineDot = styled.circle<{ $isCorrect?: boolean | null }>`
+  fill: ${({ $isCorrect }) =>
+    $isCorrect === true
+      ? "#28a745"
+      : $isCorrect === false
+      ? "#dc3545"
+      : "#6c757d"};
+  stroke: white;
+  stroke-width: 2;
+  transition: fill 0.3s ease;
 `;
 
 export const ButtonContainer = styled.div`
@@ -119,4 +133,9 @@ export const Div = styled.div`
   background: #f8f9fa;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    gap: 30px;
+  }
 `;

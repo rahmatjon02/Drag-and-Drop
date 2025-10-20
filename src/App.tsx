@@ -80,7 +80,7 @@ const App = () => {
         <ActionButton onClick={loadFromLocalStorage}>Восстановить</ActionButton>
         <ActionButton onClick={clearPairs}>Очистить</ActionButton>
         <ActionButton style={{background: "red"}} onClick={clearLocalStorage}>
-          Очистить навсегда
+          Очистить всё
         </ActionButton>
       </ButtonContainer>
     </div>

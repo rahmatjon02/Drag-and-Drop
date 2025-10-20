@@ -29,6 +29,11 @@ export const useDragAndDrop = (
   const handleDragStart = (item: Item, e: React.DragEvent) => {
     e.dataTransfer.setData("text/plain", item.id);
     setDraggingItem(item);
+
+    const crt = document.createElement("div");
+    crt.style.width = "0px";
+    crt.style.height = "0px";
+    e.dataTransfer.setDragImage(crt, 0, 0);
   };
 
   const handleDrop = (target: Item) => {
