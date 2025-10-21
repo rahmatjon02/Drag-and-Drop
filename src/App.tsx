@@ -3,7 +3,17 @@ import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import Column from "./components/Column";
 import LineLayer from "./components/LineLayer";
 import { leftItems, rightItems, correctPairs } from "./data/items";
-import { Div, ButtonContainer, ActionButton } from "./styles/styles";
+import {
+  Div,
+  ButtonContainer,
+  ActionButton,
+  SpanMobile,
+  SpanDesktop,
+  Title,
+  Description,
+  CenteredDiv,
+} from "./styles/styles";
+import { Download, RotateCcw, Save, Trash2 } from "lucide-react";
 
 const App = () => {
   const {
@@ -22,6 +32,7 @@ const App = () => {
     loadFromLocalStorage,
     clearLocalStorage,
     clearPairs,
+    removePair,
   } = useDragAndDrop(leftItems, rightItems, correctPairs);
 
   return (
@@ -31,12 +42,12 @@ const App = () => {
         if (draggingItem) setMousePosition({ x: e.clientX, y: e.clientY });
       }}
     >
-      <h1 style={{ textAlign: "center" }}>Игра «Соответствие технологий»</h1>
-      <p style={{ textAlign: "center" }}>
+      <Title>Игра «Соответствие технологий»</Title>
+      <Description>
         Перетаскивайте элементы из одного столбца в другой, чтобы создавать
         связи.
-      </p>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      </Description>
+      <CenteredDiv>
         <Div>
           <Toaster position="top-right" />
           <LineLayer
@@ -47,9 +58,11 @@ const App = () => {
             rightRefs={rightRefs}
             draggingItem={draggingItem}
             mousePosition={mousePosition}
+            removePair={removePair}
           />
 
           <Column
+            draggingItem={draggingItem}
             items={leftItems}
             hoverItem={hoverItem}
             onDragStart={handleDragStart}
@@ -62,6 +75,7 @@ const App = () => {
           />
 
           <Column
+            draggingItem={draggingItem}
             items={rightItems}
             hoverItem={hoverItem}
             onDragStart={handleDragStart}
@@ -73,14 +87,31 @@ const App = () => {
             pairs={pairs}
           />
         </Div>
-      </div>
+      </CenteredDiv>
 
       <ButtonContainer>
-        <ActionButton onClick={saveToLocalStorage}>Сохранить</ActionButton>
-        <ActionButton onClick={loadFromLocalStorage}>Восстановить</ActionButton>
-        <ActionButton onClick={clearPairs}>Очистить</ActionButton>
-        <ActionButton style={{background: "red"}} onClick={clearLocalStorage}>
-          Очистить всё
+        <ActionButton onClick={saveToLocalStorage}>
+          <Save />
+          <SpanMobile>Сохранить</SpanMobile>
+          <SpanDesktop>Сохранить в память</SpanDesktop>
+        </ActionButton>
+
+        <ActionButton onClick={loadFromLocalStorage}>
+          <Download />
+          <SpanMobile>Восстановить</SpanMobile>
+          <SpanDesktop>Восстановить из память</SpanDesktop>
+        </ActionButton>
+
+        <ActionButton onClick={clearPairs}>
+          <RotateCcw />
+          <SpanMobile>Cбросить</SpanMobile>
+          <SpanDesktop>Cбросить</SpanDesktop>
+        </ActionButton>
+
+        <ActionButton style={{ background: "red" }} onClick={clearLocalStorage}>
+          <Trash2 />
+          <SpanMobile>Очистить</SpanMobile>
+          <SpanDesktop>Очистить из память</SpanDesktop>
         </ActionButton>
       </ButtonContainer>
     </div>

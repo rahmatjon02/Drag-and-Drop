@@ -22,6 +22,7 @@ const LineLayer = ({
   mousePosition,
 }: Props) => (
   <SvgLayer>
+    {/* --- Отрисовка существующих линий --- */}
     {pairs.map((pair) => {
       const left = leftItems.find((i) => i.text === pair.left);
       const right = rightItems.find((i) => i.text === pair.right);
@@ -48,34 +49,63 @@ const LineLayer = ({
           <PathLine
             d={`M ${startX} ${startY} C ${cx} ${startY}, ${cx} ${endY}, ${endX} ${endY}`}
             $isCorrect={pair.isCorrect}
+          >
+            <animate
+              attributeName="stroke-dashoffset"
+              from="100"
+              to="0"
+              dur="0.6s"
+              fill="freeze"
+            />
+          </PathLine>
+
+          {/* Точка начала */}
+          <LineDot
+            cx={startX}
+            cy={startY}
+            r="4"
+            $isCorrect={pair.isCorrect}
           />
-          <LineDot cx={startX} cy={startY} r="4" $isCorrect={pair.isCorrect} />
-          <LineDot cx={endX} cy={endY} r="4" $isCorrect={pair.isCorrect} />
+          {/* Точка конца */}
+          <LineDot
+            cx={endX}
+            cy={endY}
+            r="4"
+            $isCorrect={pair.isCorrect}
+          />
         </g>
       );
     })}
 
+    {/* --- Временная линия при перетаскивании --- */}
     {draggingItem &&
       (() => {
         const el =
           leftRefs.current[draggingItem.id] ||
           rightRefs.current[draggingItem.id];
         if (!el) return null;
+
         const rect = el.getBoundingClientRect();
         const container =
           el.parentElement?.parentElement?.getBoundingClientRect();
         if (!container) return null;
 
-        const startX = rect.right - container.left;
+        const isFromLeft = !!leftRefs.current[draggingItem.id];
+
+        const startX = isFromLeft
+          ? rect.right - container.left
+          : rect.left - container.left;
         const startY = rect.top + rect.height / 2 - container.top;
         const endX = mousePosition.x - container.left;
         const endY = mousePosition.y - container.top;
-        console.log(mousePosition);
 
         return (
           <g>
             <DragLine d={`M ${startX} ${startY} L ${endX} ${endY}`} />
-            <circle cx={startX} cy={startY} r="4" fill="red" />
+            {/* Точка на начале */}
+            <circle cx={startX} cy={startY} r="4" fill="green" />
+            {/* Точка на конце (движется за курсором) */}
+            <circle cx={endX} cy={endY} r="4" fill="green" />
           </g>
         );
       })()}

@@ -11,7 +11,8 @@ interface Props {
   onDragEnter: (id: string) => void;
   onDragLeave: () => void;
   refEl: (el: HTMLDivElement | null) => void;
-  pairs?: Pair[]; 
+  pairs?: Pair[];
+  draggingItem: Item | null;
 }
 
 const ItemCard = ({
@@ -24,6 +25,7 @@ const ItemCard = ({
   onDragLeave,
   refEl,
   pairs = [],
+  draggingItem,
 }: Props) => {
   const pair = pairs.find((p) => p.left === item.text || p.right === item.text);
   const isCorrect = pair ? pair.isCorrect : null;
@@ -39,6 +41,7 @@ const ItemCard = ({
       onDragEnter={() => onDragEnter(item.id)}
       onDragLeave={onDragLeave}
       ref={refEl}
+      $isDragging={draggingItem?.id === item.id}
     >
       {item.text}
     </ItemWrapper>

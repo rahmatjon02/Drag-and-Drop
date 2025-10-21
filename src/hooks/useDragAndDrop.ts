@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import type { Item, Pair, CorrectPair } from "../types/types";
 
@@ -26,7 +26,12 @@ export const useDragAndDrop = (
     }
   }, []);
 
-  const handleDragStart = (item: Item, e: React.DragEvent) => {
+  const resetDrag = () => {
+    setDraggingItem(null);
+    setHoverItem(null);
+  };
+
+  const handleDragStart = useCallback((item: Item, e: React.DragEvent) => {
     e.dataTransfer.setData("text/plain", item.id);
     setDraggingItem(item);
 
@@ -34,60 +39,63 @@ export const useDragAndDrop = (
     crt.style.width = "0px";
     crt.style.height = "0px";
     e.dataTransfer.setDragImage(crt, 0, 0);
-  };
+  }, []);
 
-  const handleDrop = (target: Item) => {
-    if (!draggingItem || draggingItem.id === target.id) return;
+  const handleDrop = useCallback(
+    (target: Item) => {
+      if (!draggingItem || draggingItem.id === target.id) return;
 
-    const isLeftToRight =
-      leftItems.some((i) => i.id === draggingItem.id) &&
-      rightItems.some((i) => i.id === target.id);
+      const isLeftToRight =
+        leftItems.some((i) => i.id === draggingItem.id) &&
+        rightItems.some((i) => i.id === target.id);
 
-    const isRightToLeft =
-      rightItems.some((i) => i.id === draggingItem.id) &&
-      leftItems.some((i) => i.id === target.id);
+      const isRightToLeft =
+        rightItems.some((i) => i.id === draggingItem.id) &&
+        leftItems.some((i) => i.id === target.id);
 
-    if (!isLeftToRight && !isRightToLeft) {
-      toast.error("Можно соединять только противоположные колонки!");
+      if (!isLeftToRight && !isRightToLeft) {
+        toast.error("Можно соединять только противоположные колонки!");
+        resetDrag();
+        return;
+      }
+
+      const leftId = isLeftToRight ? draggingItem.id : target.id;
+      const rightId = isLeftToRight ? target.id : draggingItem.id;
+
+      const leftOccupied = pairs.some(
+        (p) => p.left === (isLeftToRight ? draggingItem.text : target.text)
+      );
+      const rightOccupied = pairs.some(
+        (p) => p.right === (isLeftToRight ? target.text : draggingItem.text)
+      );
+
+      if (leftOccupied || rightOccupied) {
+        toast.error("Эта карта уже занята!");
+        resetDrag();
+        return;
+      }
+
+      const isCorrect = correctPairs.some(
+        (pair) => pair.leftId === leftId && pair.rightId === rightId
+      );
+
+      const newPair: Pair = {
+        id: `${draggingItem.id}-${target.id}`,
+        left: isLeftToRight ? draggingItem.text : target.text,
+        right: isLeftToRight ? target.text : draggingItem.text,
+        isCorrect,
+      };
+
+      setPairs((prev) => [...prev, newPair]);
       resetDrag();
-      return;
-    }
+    },
+    [draggingItem, pairs, correctPairs, leftItems, rightItems, resetDrag]
+  );
 
-    const leftId = isLeftToRight ? draggingItem.id : target.id;
-    const rightId = isLeftToRight ? target.id : draggingItem.id;
-
-    const leftOccupied = pairs.some(
-      (p) => p.left === (isLeftToRight ? draggingItem.text : target.text)
-    );
-    const rightOccupied = pairs.some(
-      (p) => p.right === (isLeftToRight ? target.text : draggingItem.text)
-    );
-
-    if (leftOccupied || rightOccupied) {
-      toast.error("Эта карта уже занята!");
-      resetDrag();
-      return;
-    }
-
-    const isCorrect = correctPairs.some(
-      (pair) => pair.leftId === leftId && pair.rightId === rightId
-    );
-
-    const newPair: Pair = {
-      id: `${draggingItem.id}-${target.id}`,
-      left: isLeftToRight ? draggingItem.text : target.text,
-      right: isLeftToRight ? target.text : draggingItem.text,
-      isCorrect,
-    };
-
-    setPairs((prev) => [...prev, newPair]);
-    resetDrag();
-  };
-
-  const resetDrag = () => {
-    setDraggingItem(null);
-    setHoverItem(null);
-  };
+  const removePair = useCallback((id: string) => {
+    setPairs((prev) => prev.filter((p) => p.id !== id));
+    toast.success("Пара удалена!");
+  }, []);
 
   const saveToLocalStorage = () => {
     if (pairs.length == 0) {
@@ -124,7 +132,7 @@ export const useDragAndDrop = (
 
   const clearPairs = () => {
     setPairs([]);
-    toast.success("Данные очищены!");
+    toast.success("Данные сброшены!");
   };
 
   return {
@@ -143,5 +151,6 @@ export const useDragAndDrop = (
     loadFromLocalStorage,
     clearLocalStorage,
     clearPairs,
+    removePair,
   };
 };

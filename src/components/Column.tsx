@@ -13,6 +13,7 @@ interface Props {
   onDragLeave: () => void;
   refs: React.MutableRefObject<{ [key: string]: HTMLDivElement }>;
   pairs: Pair[];
+  draggingItem: Item | null;
 }
 
 const Column = ({
@@ -25,6 +26,7 @@ const Column = ({
   onDragLeave,
   refs,
   pairs,
+  draggingItem,
 }: Props) => (
   <ColumnWrapper>
     {items.map((item) => (
@@ -41,6 +43,7 @@ const Column = ({
           if (el) refs.current[item.id] = el;
         }}
         pairs={pairs}
+        draggingItem={draggingItem}
       />
     ))}
   </ColumnWrapper>
