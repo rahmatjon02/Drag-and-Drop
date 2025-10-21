@@ -9,7 +9,7 @@ export const leftItems: Item[] = [
 ];
 
 export const rightItems: Item[] = [
-  { id: "right-5", text: "Programming Language" },
+  { id: "right-5", text: "Prog. Language" },
   { id: "right-2", text: "Type Safety" },
   { id: "right-4", text: "Build Tool" },
   { id: "right-3", text: "CSS Framework" },
