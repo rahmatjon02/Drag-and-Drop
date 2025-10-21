@@ -10,6 +10,7 @@ interface Props {
   rightRefs: React.MutableRefObject<{ [key: string]: HTMLDivElement }>;
   draggingItem: Item | null;
   mousePosition: { x: number; y: number };
+  removePair: (id: string) => void;
 }
 
 const LineLayer = ({
@@ -20,6 +21,7 @@ const LineLayer = ({
   rightRefs,
   draggingItem,
   mousePosition,
+  removePair,
 }: Props) => (
   <SvgLayer>
     {/* --- Отрисовка существующих линий --- */}
@@ -47,6 +49,7 @@ const LineLayer = ({
       return (
         <g key={pair.id}>
           <PathLine
+            onClick={() => removePair(pair.id)}
             d={`M ${startX} ${startY} C ${cx} ${startY}, ${cx} ${endY}, ${endX} ${endY}`}
             $isCorrect={pair.isCorrect}
           >
@@ -60,19 +63,9 @@ const LineLayer = ({
           </PathLine>
 
           {/* Точка начала */}
-          <LineDot
-            cx={startX}
-            cy={startY}
-            r="4"
-            $isCorrect={pair.isCorrect}
-          />
+          <LineDot cx={startX} cy={startY} r="4" $isCorrect={pair.isCorrect} />
           {/* Точка конца */}
-          <LineDot
-            cx={endX}
-            cy={endY}
-            r="4"
-            $isCorrect={pair.isCorrect}
-          />
+          <LineDot cx={endX} cy={endY} r="4" $isCorrect={pair.isCorrect} />
         </g>
       );
     })}
