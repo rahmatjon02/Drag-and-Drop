@@ -56,6 +56,11 @@ export const ItemWrapper = styled.div<{
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
+
+  @media (max-width: 768px) {
+    width: 120px;
+    font-size: 12px;
+  }
 `;
 
 export const SvgLayer = styled.svg`
@@ -77,10 +82,10 @@ export const PathLine = styled.path<{ $isCorrect?: boolean | null }>`
   fill: none;
   stroke-dasharray: 400;
   stroke-dashoffset: 400;
+
   transition: stroke 0.3s ease, stroke-width 0.3s ease;
-  
   animation: drawLine 1s forwards;
-  
+
   cursor: pointer;
   pointer-events: stroke;
   @keyframes drawLine {
