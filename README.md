@@ -1,74 +1,56 @@
-# React + TypeScript + Vite
+Matching Pairs (React + TypeScript + Styled Components)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Интерактивное приложение, где пользователь соединяет элементы из левой и правой колонок с помощью линий.
+Проект демонстрирует работу с drag & drop, SVG-линиями и управлением состоянием без сторонних библиотек для DnD.
 
-Currently, two official plugins are available:
+⚙️ Технологии
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+React 19 — компонентный UI
 
-## React Compiler
+TypeScript — строгая типизация
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Tailwind CSS 4 — стилизация интерфейса
 
-## Expanding the ESLint configuration
+Vite — сборка и запуск проекта
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+React.memo / useCallback — оптимизация рендеров
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+SVG + кастомные линии — визуальные соединения между карточками
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+🚀 Установка и запуск
+# Установить зависимости
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+# Запустить проект в режиме разработки
+npm run dev
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+После запуска открой в браузере адрес:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-# Drag-and-Drop
+http://localhost:5173
+
+💡 Возможности
+
+Перетаскивание карточек и соединение их линиями
+
+Подсветка активных элементов при перетаскивании
+
+Удаление связей по клику на линию
+
+Реактивные SVG-линии с круглыми точками в начале и конце
+
+Адаптивный и лёгкий интерфейс
+
+🔧 Возможные улучшения
+
+Добавить анимацию появления линий
+
+Сохранение пар в localStorage
+
+Проверка правильных ответов
+
+Поддержка мобильных устройств
+
+👨‍💻 Автор
+
+Рахматджон Пирматов - Frontend Developer 
