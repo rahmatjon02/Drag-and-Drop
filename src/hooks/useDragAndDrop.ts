@@ -113,11 +113,12 @@ export const useDragAndDrop = (
       return;
     }
     try {
-      setPairs(JSON.parse(saved));
-      if (JSON.parse(saved).length == 0) {
-        toast.error("Нет сохранённых данных1");
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        toast.error("Нет сохранённых данных");
         return;
       }
+      setPairs(parsed);
       toast.success("Соединения восстановлены!");
     } catch {
       toast.error("Ошибка загрузки данных");
